@@ -4,7 +4,7 @@ Scripts to automate or manage xmrig. Written for my own personal use, see discla
 ## Disclaimer
 I assume no responsibility for any damage to your system from running these scripts. They are provided as-is in the hopes they are helpful, but they do not have robust error handling and you should review them before running.
 
-They are tested on Ubuntu 16.04 and 18.04, and macOS 10.14. They assume you followed the standard build instructions from the xmrig wiki and that all files will be cloned and located at ~/xmrig.
+They are tested on Ubuntu 16.04 and 18.04, and macOS 10.14. They generally follow the standard build instructions from the xmrig wiki and assume that all files will be cloned and located at ~/xmrig.
 
 ## How to Run
 ### `xmrig-update.sh` (install/build/update xmrig) 
