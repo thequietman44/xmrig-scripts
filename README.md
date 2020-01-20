@@ -29,6 +29,7 @@ They are tested on Ubuntu 16.04 and 18.04, and macOS 10.14. They assume you foll
     `$ chmod +x xmrig-auto.sh`
 
 **Note:** This script assumes you have already built/installed xmrig to `~/xmrig/build/` and have a valid `config.json` file in that same directory. Make sure those exist before running `xmrig-auto.sh` or it will fail.
+
 4. Run the script:
 
     `$ ./xmrig-auto.sh`
