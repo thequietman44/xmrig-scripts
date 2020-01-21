@@ -33,3 +33,8 @@ They are tested on Ubuntu 16.04 and 18.04, and macOS 10.14. They generally follo
 4. Run the script:
 
     `$ ./xmrig-auto.sh`
+
+### `xmrig-auto.bat` (Windows version of `xmrig-auto.sh`)
+1. Create a new text document in the same folder as `xmrig.exe` and your `config.json` file.
+2. Copy and paste the full text of the script into the new text file, then save it as "xmrig-auto.bat".
+3. Right-click on `xmrig-auto.bat` and choose "Run as Administrator" if you want to use the auto MSR settings, otherwise just double-click it.
