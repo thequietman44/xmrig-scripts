@@ -7,9 +7,7 @@
 # often performance improvements.
 
 # This script was written on-the-fly with no regard for best-practice or portability,
-# so feel free to refactor using more robust methods :)  
-
-SCRIPTUSER=`whoami`
+# so feel free to refactor using more robust methods :)
 
 if [ $EUID != 0 ]; then
 
@@ -38,7 +36,7 @@ else
         apt install -qq git build-essential cmake libuv1-dev libssl-dev libhwloc-dev curl > /dev/null 2>&1
 fi
 
-
+# Get xmrig latest version number
 LATEST=`curl -s https://github.com/xmrig/xmrig/blob/master/src/version.h | grep APP_VERSION | awk '{ print $11}' | sed 's/.*<\/span>//g;s/<span.*//g'`
 if [ -f $XMRIGHOME/xmrig/build/xmrig ]; then
         INSTALLED=`$XMRIGHOME/xmrig/build/xmrig --version | grep XMRig | awk '{print $2}'`
@@ -54,6 +52,7 @@ else
         echo "Installed version:        $INSTALLED"
 fi
 
+# Pause for user confirmation
 read -p "Continue with update? " -n 1 -r
 echo    # (optional) move to a new line
 if [[ ! $REPLY =~ ^[Yy]$ ]]
@@ -61,6 +60,7 @@ then
     exit 1
 fi
 
+# Start in the home directory
 cd $XMRIGHOME
 
 if [ -d ~/xmrig ]; then
@@ -80,13 +80,12 @@ echo "Change to build directory"
 cd xmrig && mkdir build && cd build
 echo `pwd`
 
-echo "Editing donate.h ..."
-sed -i -e 's/[0-9]\;/0\;/g' ../src/donate.h
-
+# Pause briefly to let user review output
 sleep 5
 
 echo "Building from source..."
 if [ `uname` == "Darwin" ]; then
+        # macOS-specific cmake
         cmake .. -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
 else
         cmake ..
