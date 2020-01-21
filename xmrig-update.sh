@@ -9,7 +9,6 @@
 # This script was written on-the-fly with no regard for best-practice or portability,
 # so feel free to refactor using more robust methods :)  
 
-
 SCRIPTUSER=`whoami`
 
 if [ $EUID != 0 ]; then
@@ -25,18 +24,24 @@ if [ $EUID != 0 ]; then
                 brew install cmake libuv libmicrohttpd openssl hwloc
         fi
 
+        # Some version of Ubuntu don't preserve $HOME when using sudo
+        # Here we make a note of the original home directory
+        echo $HOME > .xmrig-update-home
+
         echo "Running as `whoami`, elevating to root..."
         sudo "$0" "$@"
         exit $?
 else
-        # Ubuntu/Debian/generic commands, install required packages
-        apt install -qq git build-essential cmake libuv1-dev libssl-dev libhwloc-dev > /dev/null 2>&1
+        # Read back the original home dir path
+        XMRIGHOME=`cat .xmrig-update-home`
+        # Ubuntu/Debian/generic commands
+        apt install -qq git build-essential cmake libuv1-dev libssl-dev libhwloc-dev curl > /dev/null 2>&1
 fi
 
-# Get xmrig latest version number
+
 LATEST=`curl -s https://github.com/xmrig/xmrig/blob/master/src/version.h | grep APP_VERSION | awk '{ print $11}' | sed 's/.*<\/span>//g;s/<span.*//g'`
-if [ -f ~/xmrig/build/xmrig ]; then
-        INSTALLED=`~/xmrig/build/xmrig --version | grep XMRig | awk '{print $2}'`
+if [ -f $XMRIGHOME/xmrig/build/xmrig ]; then
+        INSTALLED=`$XMRIGHOME/xmrig/build/xmrig --version | grep XMRig | awk '{print $2}'`
 else
         INSTALLED=""
 fi
@@ -49,16 +54,14 @@ else
         echo "Installed version:        $INSTALLED"
 fi
 
-# Pause for user confirmation
 read -p "Continue with update? " -n 1 -r
-echo    # new line
+echo    # (optional) move to a new line
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
     exit 1
 fi
 
-# Start in the home directory
-cd ~/
+cd $XMRIGHOME
 
 if [ -d ~/xmrig ]; then
         echo "Found existing folder ~/xmrig"
@@ -67,7 +70,7 @@ if [ -d ~/xmrig ]; then
         killall xmrig || echo "xmrig was not running."
 
         echo "Moving existing folder ~/xmrig to ~/xmrig.old ..."
-        mv ~/xmrig ~/xmrig.old
+        mv $XMRIGHOME/xmrig $XMRIGHOME/xmrig.old
 fi
 
 echo "Downloading latest source code..."
@@ -77,12 +80,13 @@ echo "Change to build directory"
 cd xmrig && mkdir build && cd build
 echo `pwd`
 
-# Pause briefly to let user review output
+echo "Editing donate.h ..."
+sed -i -e 's/[0-9]\;/0\;/g' ../src/donate.h
+
 sleep 5
 
 echo "Building from source..."
 if [ `uname` == "Darwin" ]; then
-        # macOS-specific cmake
         cmake .. -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
 else
         cmake ..
