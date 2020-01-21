@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# This script tries to determine the best number of threads to use based on
+# number of cores and available L3 cache.
+# Useful when running xmrig on many diverse systems so you don't have to hard-code
+# CPU config into your config.json file or remember how many threads to set
+# when you have to restart xmrig.
+
+# Run as root to allow MSR changes, etc
+# Disable this if you want to set MSR yourself and run as an unprivileged user
 if [ $EUID != 0 ]; then
         echo "Running as `whoami`, elevating to root..."
         # Some version of Ubuntu don't preserve $HOME when using sudo
